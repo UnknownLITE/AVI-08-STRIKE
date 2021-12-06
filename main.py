@@ -62,4 +62,4 @@ async def Stats_Update():
     await channel.send(embed=embed)
 
 
-bot.run(os.environ.get("TOKEN"))
+bot.run(os.environ["TOKEN"])
