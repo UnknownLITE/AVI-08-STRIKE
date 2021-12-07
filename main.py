@@ -43,8 +43,7 @@ Zombie BR wins:         {q["Zombie BR"]}```"""
 
 @tasks.loop(hours=168)  # hours=168
 async def Stats_Update():
-    if datetime.utcnow().strftime("%H:%M") != "00:00":
-        return
+    if datetime.utcnow().strftime("%H:%M") != "00:00" and datetime.weekday(datetime.utcnow()) != 6: return
     # print(datetime.now().strftime("%H:%M:%S"))
     print("Stats Update Started...")
     channel = bot.get_channel(916717503982493816)
