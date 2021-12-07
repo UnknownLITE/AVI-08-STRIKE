@@ -12,6 +12,7 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or(">"), case_insensit
 @bot.event
 async def on_ready():
     schedule.every().monday.at("00:00").do(Stats_Update)
+    schedule.run_pending()
     print(f"Logged on as {bot.user}|{bot.user.id}")
 
 
