@@ -1,17 +1,17 @@
 import os
-from datetime import datetime
-import requests
-from bs4 import BeautifulSoup
+
 import discord
-from discord.ext import commands, tasks
+import requests
+import schedule
+from bs4 import BeautifulSoup
+from discord.ext import commands
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or(">"), case_insensitive=True)
 
 
 @bot.event
 async def on_ready():
-    # bot.load_extension(f'cogs.src._Music')
-    Stats_Update.start()
+    schedule.every().monday.at("00:00").do(Stats_Update)
     print(f"Logged on as {bot.user}|{bot.user.id}")
 
 
@@ -41,10 +41,7 @@ Zombie BR wins:         {q["Zombie BR"]}```"""
     return data
 
 
-@tasks.loop(hours=168)  # hours=168
 async def Stats_Update():
-    if datetime.utcnow().strftime("%H:%M") != "00:00" and datetime.weekday(datetime.utcnow()) != 6: return
-    # print(datetime.now().strftime("%H:%M:%S"))
     print("Stats Update Started...")
     channel = bot.get_channel(916717503982493816)
     async with channel.typing():
