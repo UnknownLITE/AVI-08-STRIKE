@@ -1,19 +1,19 @@
 import os
+from datetime import datetime, time
 
-import discord
+import nextcord
 import requests
-import schedule
 from bs4 import BeautifulSoup
-from discord.ext import commands
+from nextcord.ext import commands, tasks
+from nextcord.utils import utcnow
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or(">"), case_insensitive=True)
 
 
 @bot.event
 async def on_ready():
-    schedule.every().monday.at("00:00").do(Stats_Update)
-    schedule.run_pending()
     print(f"Logged on as {bot.user}|{bot.user.id}")
+    Stats_Update.start()
 
 
 def stats_scrape(squad):
@@ -42,21 +42,24 @@ Zombie BR wins:         {q["Zombie BR"]}```"""
     return data
 
 
+@tasks.loop(time=[time(hour=00, minute=00)])
 async def Stats_Update():
-    print("Stats Update Started...")
+    if utcnow().strftime("%A") != "Monday":
+        return
+    print(f"Stats Update Started... for {datetime.now()}")
     channel = bot.get_channel(916717503982493816)
     async with channel.typing():
-        embed = discord.Embed(title=f"AOS Stats",
+        embed = nextcord.Embed(title=f"AOS Stats",
                               description=create_embed("AOS"),
                               color=0x00ff00)
     await channel.send(embed=embed)
 
     channel = bot.get_channel(916717604159238214)
     async with channel.typing():
-        embed = discord.Embed(title=f"STRIKE Stats",
+        embed = nextcord.Embed(title=f"STRIKE Stats",
                               description=create_embed("STRIKE"),
                               color=0x00ff00)
     await channel.send(embed=embed)
-
+    print(f"Stats Update Finished... for {datetime.now()}")
 
 bot.run(os.environ["TOKEN"])

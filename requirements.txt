@@ -1,4 +1,4 @@
-discord
+nextcord
 bs4
 requests
 schedule
