@@ -68,10 +68,10 @@ async def Stats_Update():
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-    await channel.send(
+        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+    await ctx.send(
         embed=embed,
-        file=image
-    )
+        file=image)
 
     channel = bot.get_channel(898198490759450654)
     async with channel.typing():
@@ -83,28 +83,27 @@ async def Stats_Update():
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-    await channel.send(
+        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+    await ctx.send(
         embed=embed,
-        file=image
-    )
+        file=image)
     print(f"Stats Update Finished... for {datetime.now()}")
 
 
 @bot.command()
 async def stats(ctx, *, squad):
     async with ctx.channel.typing():
-        embed = nextcord.Embed(title=f"{squad} Stats",
-                               description=create_embed(f"{squad}"),
+        embed = nextcord.Embed(description=create_embed(f"{squad}"),
                                color=0x00ff00,
                                timestamp=utcnow())
         embed.set_thumbnail(
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        await ctx.send(
-            embed=embed,
-            file=image
-        )
+        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+    await ctx.send(
+        embed=embed,
+        file=image)
 
 
 @bot.command(aliases=["m", "member"])
