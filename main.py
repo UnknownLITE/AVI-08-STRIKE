@@ -11,28 +11,38 @@ from nextcord.utils import utcnow
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"), case_insensitive=True)
 
 
+def get_stats(squad):
+    url = f"https://stats.warbrokers.io/squads/{squad}"
+
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    return soup
+
+
 @bot.event
 async def on_ready():
     print(f"Logged on as {bot.user}|{bot.user.id}")
     Stats_Update.start()
 
 
-def stats_scrape(squad):
-    url = f"https://stats.warbrokers.io/squads/{squad}"
-
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    raw = (soup.find("div", class_="squad-top-ten-weapons-grid")).text
-
-    raw = raw.replace("\n\n", "")
+def create_embed(squad):
+    soup = get_stats(squad)
+    raw = (soup.find("div", class_="squad-top-ten-weapons-grid")).text.replace("\n\n", "")
     w = raw.split("\n")
     q = {w[0]: w[1], w[2]: w[3], w[4]: w[5], w[6]: w[7], w[8]: w[9], w[10]: w[11], w[12]: w[13]}
-    return q
+    tktd = (soup.find_all("div", class_="squad-player-stats"))
+    t, d, k = 0, 0, 0
 
-
-def create_embed(squad):
-    q = stats_scrape(squad)
-    data = f"""```py
+    for i in range(len(tktd)):
+        t += int(
+            tktd[i].find_all("div", class_="squad-player-number-box-value")[1].text.replace("\n", "").replace(",", ""))
+        d += int(
+            tktd[i].find_all("div", class_="squad-player-number-box-value")[2].text.replace("\n", "").replace(",", ""))
+    data = f"""```yml
+Total Kills:            {t}
+Total Deaths:           {d}
+Overall K/D:            {round(t / d, 1)}```
+```yml
 Deathmatch wins:        {q["Death Match"]}
 Missile Launch:         {q["Missile Launch"]}
 Battle Royale wins:     {q["Battle Royale"]}
@@ -52,16 +62,49 @@ async def Stats_Update():
     async with channel.typing():
         embed = nextcord.Embed(title=f"AOS Stats",
                                description=create_embed("AOS"),
-                               color=0x00ff00)
-    await channel.send(embed=embed)
+                               color=0x00ff00,
+                               timestamp=utcnow())
+        embed.set_thumbnail(
+            url="attachment://logo.png"
+        )
+        image = nextcord.File("logo.png")
+    await channel.send(
+        embed=embed,
+        file=image
+    )
 
     channel = bot.get_channel(916717604159238214)
     async with channel.typing():
         embed = nextcord.Embed(title=f"STRIKE Stats",
                                description=create_embed("STRIKE"),
-                               color=0x00ff00)
-    await channel.send(embed=embed)
+                               color=0x00ff00,
+                               timestamp=utcnow())
+        embed.set_thumbnail(
+            url="attachment://logo.png"
+        )
+        image = nextcord.File("logo.png")
+    await channel.send(
+        embed=embed,
+        file=image
+    )
     print(f"Stats Update Finished... for {datetime.now()}")
+
+
+@bot.command()
+async def stats(ctx, *, squad):
+    async with ctx.channel.typing():
+        embed = nextcord.Embed(title=f"{squad} Stats",
+                               description=create_embed(f"{squad}"),
+                               color=0x00ff00,
+                               timestamp=utcnow())
+        embed.set_thumbnail(
+            url="attachment://logo.png"
+        )
+        image = nextcord.File("logo.png")
+        await ctx.send(
+            embed=embed,
+            file=image
+        )
 
 
 @bot.command(aliases=["m", "member"])
@@ -71,13 +114,21 @@ async def members(ctx, *, squad):
         r = requests.get(url)
         soup = BeautifulSoup(r.text, "html.parser")
         raw = soup.find_all("div", class_="squad-player-header")
-        e = nextcord.Embed(title=f"*`Members`*", colour=0x00ff00)
+        e = nextcord.Embed(title=f"*`Members`*", colour=0x00ff00, timestamp=utcnow())
         for i in range(len(raw)):
             q = raw[i].text.replace("\n", "")
             q = q.replace("\n", "")
-            e.set_author(name=f"[{squad}]", url=url, icon_url="https://warbrokers.io/img/ui_logo_200.png")
             e.add_field(name="\u200B", value=f"{i + 1}. __[`{q}`](https://stats.warbrokers.io{raw[i].a['href']})__")
-            e.set_image(url=f"https://stats.warbrokers.io/images/backgrounds/banner-{random.randint(1, 20)}.jpg")
-    await ctx.send(embed=e)
+        e.set_author(name=f"[{squad}]", url=url, icon_url="https://warbrokers.io/img/ui_logo_200.png")
+        e.set_image(url=f"https://stats.warbrokers.io/images/backgrounds/banner-{random.randint(1, 20)}.jpg")
+        e.set_thumbnail(
+            url="attachment://logo.png"
+        )
+        image = nextcord.File("logo.png")
+        await ctx.send(
+            embed=e,
+            file=image
+        )
+
 
 bot.run(os.environ["TOKEN"])
