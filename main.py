@@ -99,7 +99,7 @@ async def stats(ctx, *, squad):
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squads/{squad}")
+        embed.set_author(name=f"[{squad}]'s Stats", url=f"https://stats.warbrokers.io/squads/{squad}")
     await ctx.send(
         embed=embed,
         file=image)
