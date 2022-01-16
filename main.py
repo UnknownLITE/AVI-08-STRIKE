@@ -68,22 +68,21 @@ async def Stats_Update():
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+        embed.set_author(name=f"[{squad}]'s Stats", url=f"https://stats.warbrokers.io/squads/{squad}")
     await ctx.send(
         embed=embed,
         file=image)
 
     channel = bot.get_channel(898198490759450654)
     async with channel.typing():
-        embed = nextcord.Embed(title=f"STRIKE Stats",
-                               description=create_embed("STRIKE"),
+        embed = nextcord.Embed(description=create_embed("STRIKE"),
                                color=0x00ff00,
                                timestamp=utcnow())
         embed.set_thumbnail(
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+        embed.set_author(name=f"[{squad}]'s Stats", url=f"https://stats.warbrokers.io/squads/{squad}")
     await ctx.send(
         embed=embed,
         file=image)
@@ -100,7 +99,7 @@ async def stats(ctx, *, squad):
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squad/{squad}")
+        embed.set_author(name=f"[{squad}]", url=f"https://stats.warbrokers.io/squads/{squad}")
     await ctx.send(
         embed=embed,
         file=image)
@@ -120,7 +119,7 @@ async def members(ctx, *, squad):
             e.add_field(name="\u200B", value=f"{i + 1}. __[`{q}`](https://stats.warbrokers.io{raw[i].a['href']})__")
         e.set_author(name=f"[{squad}]", url=url, icon_url="https://warbrokers.io/img/ui_logo_200.png")
         e.set_image(url=f"https://stats.warbrokers.io/images/backgrounds/banner-{random.randint(1, 20)}.jpg")
-        await ctx.send(embed=e)
+    await ctx.send(embed=e)
 
 
 bot.run(os.environ["TOKEN"])
