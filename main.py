@@ -58,7 +58,7 @@ async def Stats_Update():
     if utcnow().strftime("%A") != "Monday":
         return
     print(f"Stats Update Started... for {datetime.now()}")
-    channel = bot.get_channel(916717503982493816)
+    channel = bot.get_channel(898198669348712548)
     async with channel.typing():
         embed = nextcord.Embed(title=f"AOS Stats",
                                description=create_embed("AOS"),
@@ -73,7 +73,7 @@ async def Stats_Update():
         file=image
     )
 
-    channel = bot.get_channel(916717604159238214)
+    channel = bot.get_channel(898198490759450654)
     async with channel.typing():
         embed = nextcord.Embed(title=f"STRIKE Stats",
                                description=create_embed("STRIKE"),
