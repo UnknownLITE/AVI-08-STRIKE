@@ -121,14 +121,7 @@ async def members(ctx, *, squad):
             e.add_field(name="\u200B", value=f"{i + 1}. __[`{q}`](https://stats.warbrokers.io{raw[i].a['href']})__")
         e.set_author(name=f"[{squad}]", url=url, icon_url="https://warbrokers.io/img/ui_logo_200.png")
         e.set_image(url=f"https://stats.warbrokers.io/images/backgrounds/banner-{random.randint(1, 20)}.jpg")
-        e.set_thumbnail(
-            url="attachment://logo.png"
-        )
-        image = nextcord.File("logo.png")
-        await ctx.send(
-            embed=e,
-            file=image
-        )
+        await ctx.send(embed=e)
 
 
 bot.run(os.environ["TOKEN"])
