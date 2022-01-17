@@ -68,7 +68,7 @@ async def Stats_Update():
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]'s Stats", url=f"https://stats.warbrokers.io/squads/{squad}")
+        embed.set_author(name=f"[AOS]'s Stats", url=f"https://stats.warbrokers.io/squads/AOS")
     await ctx.send(
         embed=embed,
         file=image)
@@ -82,7 +82,7 @@ async def Stats_Update():
             url="attachment://logo.png"
         )
         image = nextcord.File("logo.png")
-        embed.set_author(name=f"[{squad}]'s Stats", url=f"https://stats.warbrokers.io/squads/{squad}")
+        embed.set_author(name=f"[STRIKE]'s Stats", url=f"https://stats.warbrokers.io/squads/STRIKE")
     await ctx.send(
         embed=embed,
         file=image)
