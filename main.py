@@ -69,7 +69,7 @@ async def Stats_Update():
         )
         image = nextcord.File("logo.png")
         embed.set_author(name=f"[AOS]'s Stats", url=f"https://stats.warbrokers.io/squads/AOS")
-    await ctx.send(
+    await channel.send(
         embed=embed,
         file=image)
 
@@ -83,7 +83,7 @@ async def Stats_Update():
         )
         image = nextcord.File("logo.png")
         embed.set_author(name=f"[STRIKE]'s Stats", url=f"https://stats.warbrokers.io/squads/STRIKE")
-    await ctx.send(
+    await channel.send(
         embed=embed,
         file=image)
     print(f"Stats Update Finished... for {datetime.now()}")
