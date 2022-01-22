@@ -1,2 +1,2 @@
 hikari
-lightbulb
+hikari-lightbulb
