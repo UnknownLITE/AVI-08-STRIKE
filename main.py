@@ -16,8 +16,7 @@ import hikari
 import lightbulb
 import os
 
-bot = lightbulb.BotApp(os.environ['TOKEN'],
-                       default_enabled_guilds=834693207186341889)  # OTMzMjUzNDgwNDEwMzkwNTk4.Yee2CA.2p8QfaQAy24DRqF6IyRxWd5FRoM
+bot = lightbulb.BotApp(os.environ['TOKEN'])
 
 
 @bot.listen(hikari.StartedEvent)
@@ -119,52 +118,6 @@ async def on_guild_message_update(event):
                 embed.set_author(name=f"{event.message.author.username}#{event.message.author.discriminator}")
                 embed.timestamp = event.message.created_at
             return
-
-
-@bot.command
-@lightbulb.command('filter', 'Add/remove a word from the filter list.')
-@lightbulb.implements(lightbulb.SlashCommandGroup)
-async def msg_filter(ctx):
-    pass
-
-
-@msg_filter.child
-@lightbulb.option('words', 'Word(s) to add to the profanity list.', type=str, required=True)
-@lightbulb.command('add', 'Add a word to the filter list.')
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def add_filter(ctx):
-    with open('en.txt', 'r') as f:
-        profanity = f.read().splitlines()
-    with open('en.txt', 'a') as f:
-        try:
-            w = ctx.options.words.lower().split(' ')
-            for i in w:
-                if w[i] in profanity:
-                    await ctx.reply(f'||{w[i]}|| is already in the filter list.')
-                    return
-        except TypeError:
-            f.write(f'{i}\n')
-            await ctx.respond(f'||{w}|| has been added to the filter list.')
-
-
-@msg_filter.child
-@lightbulb.command('remove', 'Remove a word from the filter list.')
-@lightbulb.implements(lightbulb.SlashSubCommand)
-async def remove_filter(ctx):
-    with open('en.txt', 'r') as f:
-        profanity = f.read().splitlines()
-    with open('en.txt', 'w') as f:
-        try:
-            w = ctx.options.words.lower().split(' ')
-            for i in w:
-                if w[i] not in profanity:
-                    await ctx.reply(f'||{w[i]}|| is not in the filter list.')
-                    return
-        except TypeError:
-            for i in profanity:
-                if i not in w:
-                    f.write(f'{i}\n')
-            await ctx.respond(f'||{w}|| has been removed from the filter list.')
 
 
 bot.run()
