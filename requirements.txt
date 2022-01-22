@@ -1,1 +1,4 @@
-hikari
+nextcord
+bs4
+requests
+schedule
