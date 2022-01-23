@@ -27,7 +27,7 @@ async def on_started(event):
 @bot.listen(hikari.GuildMessageCreateEvent)
 async def on_guild_message_create(event):
     print(event.author, event.author.is_bot)
-    if event.author.is_bot and not (
+    if event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)):
         return
     with open('en.txt', 'r', encoding='utf-8') as f:
@@ -77,7 +77,7 @@ async def on_guild_message_create(event):
 
 @bot.listen(hikari.GuildMessageUpdateEvent)
 async def on_guild_message_update(event):
-    if event.author.is_bot and not (
+    if event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)):
         return
     with open('en.txt', 'r') as f:
