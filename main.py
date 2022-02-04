@@ -9,6 +9,7 @@ Add a slash-command that would add or remove profanity from the filter, you may 
 """
 import json
 import re
+import time
 from datetime import datetime, timedelta, timezone
 import hikari
 import lightbulb
