@@ -27,8 +27,21 @@ bot = lightbulb.BotApp(os.environ['TOKEN'], prefix='=')
 @bot.listen(hikari.StartedEvent)
 async def on_started(event):
     print(f'=====\nLogged in as {bot.get_me().username} | {bot.get_me().id}\n=====')
+    global uptime
+    uptime = time.time()
 
+@bot.command
+@lightbulb.command(name="uptime", description="Get the bot's uptime.")
+@lightbulb.implements(lightbulb.PrefixCommand)
+async def uptime_cmd(ctx):
+    y = str(timedelta(seconds=int(round(time.time() - uptime))))
+    e = hikari.Embed(title='Uptime',
+                     description=f'{y}',
+                     color=0x00ff00)
+    e.timestamp = datetime.now(timezone.utc)
+    await ctx.respond(embed=e)
 
+    
 @bot.listen(hikari.GuildMessageCreateEvent)
 async def on_guild_message_create(event):
     msg_create = logging.getLogger("Message_Create")
