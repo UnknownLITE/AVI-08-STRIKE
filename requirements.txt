@@ -1,2 +1,2 @@
-hikari
-hikari-lightbulb
+nextcord[speed]
+bs4
