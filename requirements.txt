@@ -1,3 +1,4 @@
 nextcord[speed]
 bs4
 aiomysql
+requests
