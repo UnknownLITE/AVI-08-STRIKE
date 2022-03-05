@@ -10,20 +10,18 @@ from nextcord.utils import utcnow
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"), case_insensitive=True)
 
-
+@bot.event
+async def on_ready():
+    print(f"Logged on as {bot.user}|{bot.user.id}")
+    Stats_Update.start()
+    print("Stat_Update running? - " + Stats_Update.is_ruuning())
+    
 def get_stats(squad):
     url = f"https://stats.warbrokers.io/squads/{squad}"
 
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
     return soup
-
-
-@bot.event
-async def on_ready():
-    print(f"Logged on as {bot.user}|{bot.user.id}")
-    Stats_Update.start()
-
 
 def create_embed(squad):
     soup = get_stats(squad)
