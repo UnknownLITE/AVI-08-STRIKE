@@ -1,26 +1,17 @@
 import asyncio
 import os
-# import random
-from datetime import time # datetime, 
+from datetime import time
 
 import aiomysql
 import nextcord
 import requests
 from bs4 import BeautifulSoup
 from nextcord.ext import commands, tasks
-# from nextcord.utils import utcnow
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("."), case_insensitive=True,
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"), case_insensitive=True,
                    intents=nextcord.Intents.all())
 
 bot.remove_command("help")
-
-def get_stats(squad):
-    url = f"https://stats.warbrokers.io/squads/{squad}"
-
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    return soup
 
 
 @bot.event
@@ -62,19 +53,6 @@ async def link(ctx, stats_link, member: nextcord.Member = None):
         else:
             await member.edit(nick=nick_scrap(url))
             await ctx.message.add_reaction("✅")
-        # msg = await ctx.send(f"Validating stats link...")
-        # match r.status_code:
-        #     case 200:
-        #         result = "Valid :white_check_mark:"
-        #     case _:
-        #         result =
-
-        #         return
-        # await msg.edit(content=f"{result}")
-
-        # t
-
-        # await msg.delete()
 
     conn = await aiomysql.connect(host='remotemysql.com', port=3306,
                                   user='PhVgPxDJdd', password='OWKglFnGUr', db='PhVgPxDJdd')
@@ -82,7 +60,7 @@ async def link(ctx, stats_link, member: nextcord.Member = None):
     cur = await conn.cursor()
     await cur.execute("SELECT * FROM WB_Nickname;")
     for i in await cur.fetchall():
-        if i[0] == ctx.author.id:
+        if i[0] == member.id:
             await cur.execute(f"UPDATE WB_Nickname SET player_id = '{url[-24:]}' WHERE user_id = {member.id};")
             await conn.commit()
             await cur.close()
@@ -101,6 +79,28 @@ async def chnick_error(ctx, error):
     else:
         raise error
 
+@bot.command()
+async def unlink(ctx, * , member: nextcord.Member = None):
+    if member is not None and not ctx.author.guild_permissions.administrator and not ctx.author.id == member.id or member.bot:
+        await ctx.message.add_reaction("🚫")
+        return
+    if member is None or member.id == ctx.author.id:
+        member = ctx.author
+    conn = await aiomysql.connect(host='remotemysql.com', port=3306,
+                                  user='PhVgPxDJdd', password='OWKglFnGUr', db='PhVgPxDJdd')
+
+    cur = await conn.cursor()
+    await cur.execute("SELECT * FROM WB_Nickname;")
+    for i in await cur.fetchall():
+        if i[0] == member.id:
+            await cur.execute(f"DELETE FROM WB_Nickname WHERE user_id = {member.id};")
+            await conn.commit()
+            await cur.close()
+            return
+    await cur.close()
+    await member.edit(nick=None)
+    await ctx.message.add_reaction("<:kill:927889321023918110>")
+    return
 
 @tasks.loop(time=[time(hour=00, minute=00)])
 async def update_nick():
