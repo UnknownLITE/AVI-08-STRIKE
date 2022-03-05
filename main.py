@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from nextcord.ext import commands, tasks
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"), case_insensitive=True,
+bot = commands.Bot(command_prefix=commands.when_mentioned_or("."), case_insensitive=True,
                    intents=nextcord.Intents.all())
 
 bot.remove_command("help")
