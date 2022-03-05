@@ -33,11 +33,11 @@ def nick_scrap(link):
 
 @bot.command(aliases=["nick"])
 async def link(ctx, stats_link, member: nextcord.Member = None):
+    if member is None or member.id == ctx.author.id:
+        member = ctx.author
     if member is not None and not ctx.author.guild_permissions.administrator and not ctx.author.id == member.id or member.bot:
         await ctx.message.add_reaction("🚫")
         return
-    if member is None or member.id == ctx.author.id:
-        member = ctx.author
     if stats_link.startswith("https://stats.warbrokers.io/players/i/"):
         url = stats_link
     else:
@@ -81,11 +81,11 @@ async def chnick_error(ctx, error):
 
 @bot.command()
 async def unlink(ctx, * , member: nextcord.Member = None):
+    if member is None or member.id == ctx.author.id:
+        member = ctx.author
     if member is not None and not ctx.author.guild_permissions.administrator and not ctx.author.id == member.id or member.bot:
         await ctx.message.add_reaction("🚫")
         return
-    if member is None or member.id == ctx.author.id:
-        member = ctx.author
     conn = await aiomysql.connect(host='remotemysql.com', port=3306,
                                   user='PhVgPxDJdd', password='OWKglFnGUr', db='PhVgPxDJdd')
 
