@@ -32,9 +32,9 @@ async def on_started(event):
 @bot.listen(hikari.GuildMessageCreateEvent)
 async def on_guild_message_create(event):
     msg_create = logging.getLogger("Message_Create")
-    if event.author.is_bot or (
+    if event.author.is_system or event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)
-    ) or event.author.is_system:
+    ):
         return
     with open('en.txt', 'r', encoding='utf-8') as f:
         profanity = f.read().strip('\ufeff').splitlines()
@@ -96,9 +96,9 @@ async def on_guild_message_create(event):
 @bot.listen(hikari.GuildMessageUpdateEvent)
 async def on_guild_message_update(event):
     msg_update = logging.getLogger("Message_Update")
-    if event.author.is_bot or (
+    if event.author.is_system or event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)
-    ) or event.author.is_system:
+    ):
         return
     with open('en.txt', 'r') as f:
         profanity = f.read().splitlines()
