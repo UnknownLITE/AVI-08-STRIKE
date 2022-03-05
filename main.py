@@ -1,19 +1,22 @@
 """
 Code a discord bot to keep servers clean.
-
 A bot to help keep Discord servers clean from profanity. Bot will search messages sent to channels for profanity, deleting profane text and timeout user for 5 min , logs banned users to a special channel.
-
 Bot will also automatically give users muted role on their 5th offense.
-
 Add a slash-command that would add or remove profanity from the filter, you may edit the en.txt file. To remove a word or phrase, delete it from the file; to add, add the new word or phrase on a new line.
 """
 import json
 import re
-import time
 from datetime import datetime, timedelta, timezone
+import logging
 import hikari
 import lightbulb
 import os
+
+logging.basicConfig(level=logging.INFO, filename='log.log', filemode='w',
+                    format='%(asctime)s - %(name)-5s - %(levelname)5s - %(message)s',
+                    datefmt='%m-%d %H:%M')
+
+filter_logger = logging.getLogger("Filter-list-Log")
 
 bot = lightbulb.BotApp(os.environ['TOKEN'], prefix='=')
 
@@ -21,26 +24,14 @@ bot = lightbulb.BotApp(os.environ['TOKEN'], prefix='=')
 @bot.listen(hikari.StartedEvent)
 async def on_started(event):
     print(f'=====\nLogged in as {bot.get_me().username} | {bot.get_me().id}\n=====')
-    global uptime
-    uptime = time.time()
 
-@bot.command
-@lightbulb.command(name="uptime", description="Get the bot's uptime.")
-@lightbulb.implements(lightbulb.PrefixCommand)
-async def uptime_cmd(ctx):
-    y = str(timedelta(seconds=int(round(time.time() - uptime))))
-    e = hikari.Embed(title='Uptime',
-                     description=f'{y}',
-                     color=0x00ff00)
-    e.timestamp = datetime.now(timezone.utc)
-    await ctx.respond(embed=e)
 
-    
 @bot.listen(hikari.GuildMessageCreateEvent)
 async def on_guild_message_create(event):
-    if event.author.is_bot or (
+    msg_create = logging.getLogger("Message_Create")
+    if event.author.is_system or event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)
-    ) or event.author.is_system:
+    ):
         return
     with open('en.txt', 'r', encoding='utf-8') as f:
         profanity = f.read().strip('\ufeff').splitlines()
@@ -62,6 +53,10 @@ async def on_guild_message_create(event):
     await event.member.edit(communication_disabled_until=datetime.now(timezone.utc) + timedelta(minutes=5))
 
     # Logging
+
+    msg_create.warning(
+        f'{event.author.username}#{event.author.discriminator} ({event.author.id}) received a timeout for 5 '
+        f'minutes.')
 
     embed = hikari.Embed(title=f'Mute',
                          description=f'{event.author.mention} received a timeout of 5 minutes. \nReason: '
@@ -97,9 +92,10 @@ async def on_guild_message_create(event):
 
 @bot.listen(hikari.GuildMessageUpdateEvent)
 async def on_guild_message_update(event):
-    if event.author.is_bot or (
+    msg_update = logging.getLogger("Message_Update")
+    if event.author.is_system or event.author.is_bot or (
             hikari.Permissions.ADMINISTRATOR in lightbulb.utils.permissions.permissions_for(event.member)
-    ) or event.author.is_system:
+    ):
         return
     with open('en.txt', 'r') as f:
         profanity = f.read().splitlines()
@@ -120,6 +116,9 @@ async def on_guild_message_update(event):
     await event.member.edit(communication_disabled_until=datetime.now(timezone.utc) + timedelta(minutes=5))
 
     # Logging
+    msg_update.warning(
+        f'{event.author.username}#{event.author.discriminator} ({event.author.id}) received a timeout for 5 '
+        f'minutes.')
 
     embed = hikari.Embed(title=f'Mute',
                          description=f'{event.author.mention} received a timeout of 5 minutes. \nReason: '
@@ -135,6 +134,8 @@ async def on_guild_message_update(event):
     json.dump(log_file, open('warn_count.json', 'w'), indent=4)
     if log_file[str(event.author.id)] >= 5:
         config = json.load(open('config.json', 'r'))
+        msg_update.info(f'{event.author.username}#{event.author.discriminator} ({event.author.id}) received a '
+                        f'Muted role ({config["muted_role"][str(event.guild_id)]})')
         await event.member.edit(roles=[config["muted_role"][str(event.guild_id)]])
         embed = hikari.Embed(title='Profanity Offense',
                              description=f'{event.author.mention} has been given <@&{config["muted_role"][str(event.guild_id)]}> for '
@@ -178,6 +179,9 @@ async def add_filter(ctx: lightbulb.Context) -> None:
                          color=hikari.Color.from_hex_code('#57F287'))
         e.timestamp = datetime.now(timezone.utc)
         await ctx.respond(embed=e)
+        filter_logger.info(
+            f'{ctx.author.username}#{ctx.author.discriminator} removed `{ctx.options.word.lower()}` from the filter '
+            f'list.')
 
 
 @msg_filter.child
@@ -204,6 +208,8 @@ async def remove_filter(ctx):
                      color=hikari.Color.from_hex_code('#FEE75C'))
     e.timestamp = datetime.now(timezone.utc)
     await ctx.respond(embed=e)
+    filter_logger.info(f'{ctx.author.username}#{ctx.author.discriminator} removed `{ctx.options.word.lower()}` from '
+                       f'the filter list.')
 
 
 @bot.listen(lightbulb.CommandErrorEvent)
