@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"), case_insensit
 async def on_ready():
     print(f"Logged on as {bot.user}|{bot.user.id}")
     Stats_Update.start()
-    print("Stat_Update running? - " + Stats_Update.is_ruuning())
+    print("Stat_Update running? - " + Stats_Update.is_running())
     
 def get_stats(squad):
     url = f"https://stats.warbrokers.io/squads/{squad}"
