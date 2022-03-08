@@ -73,11 +73,11 @@ async def link(ctx, stats_link, member: nextcord.Member = None):
 @link.error
 async def chnick_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"Missing argument :warning:\nRun `{ctx.prefix}nick [link_to_stats/player_id]`")
+        await ctx.send(f"Missing argument :warning:\nUsage: `{ctx.prefix}nick [link_to_stats/player_id]`")
     else:
         embed = nextcord.Embed(title="Something went wrong!! :warning:", description=f"> `{error}`",
                                color=nextcord.Color.red())
-        await ctx.send(f"Calling <@794913278371168257> for help!", embed=embed)
+        await ctx.reply(f"Call <@794913278371168257> for help!", embed=embed)
         await ctx.message.add_reaction("⚠")
 
 
@@ -111,7 +111,7 @@ async def unlink(ctx, *, member: nextcord.Member = None):
 async def unlink_error(ctx, error):
     embed = nextcord.Embed(title="Something went wrong!! :warning:", description=f"> `{error}`",
                            color=nextcord.Color.red())
-    await ctx.send(f"Calling <@794913278371168257> for help!", embed=embed)
+    await ctx.reply(f"Call <@794913278371168257> for help!", embed=embed)
     await ctx.message.add_reaction("⚠")
 
 
