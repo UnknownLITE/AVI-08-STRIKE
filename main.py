@@ -32,11 +32,11 @@ def nick_scrap(link):
 
 @bot.command(aliases=["nick"])
 async def link(ctx, stats_link, member: nextcord.Member = None):
-    if member is not None and not ctx.author.guild_permissions.administrator and not ctx.author.id == member.id or member.bot:
-        await ctx.message.add_reaction("🚫")
-        return
     if member is None:
         member = ctx.author
+    if member is not None and not ctx.author.guild_permissions.administrator and not ctx.author.id == member.id or member.bot:
+        await ctx.message.add_reaction("🚫")
+            return
     if stats_link.startswith("https://stats.warbrokers.io/players/i/"):
         url = stats_link
     else:
