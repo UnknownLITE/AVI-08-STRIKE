@@ -1,2 +1,2 @@
-hikari
+hikari[speedups]
 hikari-lightbulb
